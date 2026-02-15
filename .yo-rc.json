@@ -1,0 +1,33 @@
+{
+  "generator-jhipster": {
+    "applicationType": "monolith",
+    "authenticationType": "jwt",
+    "baseName": "agenciaAutosApi",
+    "buildTool": "maven",
+    "cacheProvider": "caffeine",
+    "clientFramework": "no",
+    "clientTestFrameworks": null,
+    "clientTheme": null,
+    "creationTimestamp": 1771128074508,
+    "databaseType": "sql",
+    "devDatabaseType": "mysql",
+    "enableHibernateCache": true,
+    "enableTranslation": false,
+    "entities": [],
+    "feignClient": null,
+    "jhipsterVersion": "8.11.0",
+    "jwtSecretKey": "YWU5YjhjOWUzMmFmNDliNzFmZjdhNzlhNGVjNmViMTQwNDA2NzZiODAzNDNhNTQ4ZmU3YmE4YzZjZGY0MTM2ZDkzMmVjZTIyMmRjZmUwOWUxZjg2MDAyY2I3ZDdhZmQwODBlYTc1ZmIwZGQ4Y2NjZjRmZTA2NzIyYjZiOTJhZDY=",
+    "microfrontend": null,
+    "microfrontends": [],
+    "nativeLanguage": "en",
+    "packageName": "com.agencia.autos",
+    "prodDatabaseType": "mysql",
+    "reactive": false,
+    "serverPort": null,
+    "serviceDiscoveryType": null,
+    "skipClient": true,
+    "syncUserWithIdp": null,
+    "testFrameworks": [],
+    "withAdminUi": null
+  }
+}
