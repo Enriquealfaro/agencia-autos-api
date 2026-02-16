@@ -47,6 +47,10 @@ public class Auto implements Serializable {
     @Column(name = "transmision", length = 20, nullable = false)
     private String transmision;
 
+    @Size(max = 255)
+    @Column(name = "imagen_url", length = 255)
+    private String imagenUrl;
+
     public Long getId() {
         return id;
     }
@@ -103,6 +107,14 @@ public class Auto implements Serializable {
         this.transmision = transmision;
     }
 
+    public String getImagenUrl() {
+        return imagenUrl;
+    }
+
+    public void setImagenUrl(String imagenUrl) {
+        this.imagenUrl = imagenUrl;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -140,6 +152,9 @@ public class Auto implements Serializable {
             precio +
             ", transmision='" +
             transmision +
+            '\'' +
+            ", imagenUrl='" +
+            imagenUrl +
             '\'' +
             '}'
         );

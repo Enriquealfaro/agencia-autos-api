@@ -41,3 +41,11 @@ body {
   overflow: auto;
   font-size: 0.9rem;
 }
+
+.catalog-image {
+  width: 96px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+}

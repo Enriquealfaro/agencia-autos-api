@@ -33,6 +33,9 @@ public class AutoDTO {
     @Size(max = 20)
     private String transmision;
 
+    @Size(max = 255)
+    private String imagenUrl;
+
     public Long getId() {
         return id;
     }
@@ -89,6 +92,14 @@ public class AutoDTO {
         this.transmision = transmision;
     }
 
+    public String getImagenUrl() {
+        return imagenUrl;
+    }
+
+    public void setImagenUrl(String imagenUrl) {
+        this.imagenUrl = imagenUrl;
+    }
+
     @Override
     public String toString() {
         return (
@@ -110,6 +121,9 @@ public class AutoDTO {
             precio +
             ", transmision='" +
             transmision +
+            '\'' +
+            ", imagenUrl='" +
+            imagenUrl +
             '\'' +
             '}'
         );

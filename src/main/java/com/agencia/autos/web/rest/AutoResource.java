@@ -13,8 +13,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
@@ -45,6 +47,31 @@ public class AutoResource {
         }
 
         AutoDTO result = autoService.save(autoDTO);
+        return ResponseEntity.created(new URI("/api/autos/" + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
+            .body(result);
+    }
+
+    @PostMapping(value = "/with-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AutoDTO> createAutoWithImage(
+        @RequestParam("marca") String marca,
+        @RequestParam("modelo") String modelo,
+        @RequestParam("color") String color,
+        @RequestParam("anio") Integer anio,
+        @RequestParam("precio") java.math.BigDecimal precio,
+        @RequestParam("transmision") String transmision,
+        @RequestParam("imagen") MultipartFile imagen
+    ) throws URISyntaxException {
+        AutoDTO autoDTO = new AutoDTO();
+        autoDTO.setMarca(marca);
+        autoDTO.setModelo(modelo);
+        autoDTO.setColor(color);
+        autoDTO.setAnio(anio);
+        autoDTO.setPrecio(precio);
+        autoDTO.setTransmision(transmision);
+
+        LOG.debug("REST request to save Auto with image : {}", autoDTO);
+        AutoDTO result = autoService.saveWithImage(autoDTO, imagen);
         return ResponseEntity.created(new URI("/api/autos/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
             .body(result);

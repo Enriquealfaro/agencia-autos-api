@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var clearBtn = document.getElementById('clearBtn');
   var output = document.getElementById('jsonOutput');
   var saveAlert = document.getElementById('saveAlert');
-  var API_URL = '/api/autos';
+  var API_URL = '/api/autos/with-image';
 
   if (!form || !output || !clearBtn || !saveAlert) {
     return;
@@ -42,14 +42,25 @@ document.addEventListener('DOMContentLoaded', function () {
       precio: Number(form.precio.value),
       transmision: form.transmision.value,
     };
+    var imageFile = form.imagen.files && form.imagen.files.length > 0 ? form.imagen.files[0] : null;
 
-    showJson({ payload: autoData, estado: 'Enviando...' });
+    showJson({ payload: autoData, imagen: imageFile ? imageFile.name : null, estado: 'Enviando...' });
 
     try {
+      var formData = new FormData();
+      formData.append('marca', autoData.marca);
+      formData.append('modelo', autoData.modelo);
+      formData.append('color', autoData.color);
+      formData.append('anio', String(autoData.anio));
+      formData.append('precio', String(autoData.precio));
+      formData.append('transmision', autoData.transmision);
+      if (imageFile) {
+        formData.append('imagen', imageFile);
+      }
+
       var response = await fetch(API_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(autoData),
+        body: formData,
       });
 
       if (!response.ok) {

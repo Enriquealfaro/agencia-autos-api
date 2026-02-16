@@ -70,6 +70,11 @@
                     <option value="Automatica">Automatica</option>
                   </select>
                 </div>
+                <div class="col-12">
+                  <label for="imagen" class="form-label">Imagen del auto</label>
+                  <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*" required>
+                  <div class="form-text">Se guarda en carpeta <code>imagenesAutos</code> con nombre incremental.</div>
+                </div>
                 <div class="col-12 d-flex flex-wrap gap-2 pt-2">
                   <button type="submit" class="btn btn-primary">Generar JSON</button>
                   <button type="button" id="clearBtn" class="btn btn-outline-secondary">Limpiar</button>

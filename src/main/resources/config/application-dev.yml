@@ -110,3 +110,6 @@ jhipster:
 # ===================================================================
 
 # application:
+application:
+  autos:
+    image-storage-path: imagenesAutos

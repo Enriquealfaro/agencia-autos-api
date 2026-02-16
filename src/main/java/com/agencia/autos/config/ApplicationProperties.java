@@ -12,11 +12,16 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class ApplicationProperties {
 
     private final Liquibase liquibase = new Liquibase();
+    private final Autos autos = new Autos();
 
     // jhipster-needle-application-properties-property
 
     public Liquibase getLiquibase() {
         return liquibase;
+    }
+
+    public Autos getAutos() {
+        return autos;
     }
 
     // jhipster-needle-application-properties-property-getter
@@ -31,6 +36,19 @@ public class ApplicationProperties {
 
         public void setAsyncStart(Boolean asyncStart) {
             this.asyncStart = asyncStart;
+        }
+    }
+
+    public static class Autos {
+
+        private String imageStoragePath = "imagenesAutos";
+
+        public String getImageStoragePath() {
+            return imageStoragePath;
+        }
+
+        public void setImageStoragePath(String imageStoragePath) {
+            this.imageStoragePath = imageStoragePath;
         }
     }
     // jhipster-needle-application-properties-property-class

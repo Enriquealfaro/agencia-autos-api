@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function renderRows(autos) {
     if (!autos || autos.length === 0) {
-      tableBody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-secondary">No hay autos registrados.</td></tr>';
+      tableBody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-secondary">No hay autos registrados.</td></tr>';
       return;
     }
 
@@ -27,6 +27,11 @@ document.addEventListener('DOMContentLoaded', function () {
       .map(function (auto) {
         return (
           '<tr>' +
+          '<td>' +
+          (auto.imagenUrl
+            ? '<img class="catalog-image" src="' + auto.imagenUrl + '" alt="Imagen de ' + auto.marca + ' ' + auto.modelo + '">'
+            : '<span class="text-secondary small">Sin imagen</span>') +
+          '</td>' +
           '<td>' +
           auto.marca +
           '</td>' +
@@ -77,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function () {
       renderRows(autos);
       updatePager();
     } catch (error) {
-      tableBody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-danger">No se pudo cargar la informacion.</td></tr>';
+      tableBody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-danger">No se pudo cargar la informacion.</td></tr>';
       alertBox.textContent = 'No se pudo cargar el catalogo (' + error.message + ').';
       alertBox.classList.remove('d-none');
     }
