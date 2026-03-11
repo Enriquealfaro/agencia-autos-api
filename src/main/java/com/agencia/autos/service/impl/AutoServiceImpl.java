@@ -2,6 +2,7 @@ package com.agencia.autos.service.impl;
 
 import com.agencia.autos.config.ApplicationProperties;
 import com.agencia.autos.domain.Auto;
+import com.agencia.autos.domain.enumeration.AutoStatus;
 import com.agencia.autos.repository.AutoRepository;
 import com.agencia.autos.service.AutoService;
 import com.agencia.autos.service.dto.AutoDTO;
@@ -12,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,6 +43,9 @@ public class AutoServiceImpl implements AutoService {
     @Override
     public AutoDTO save(AutoDTO autoDTO) {
         Auto auto = toEntity(autoDTO);
+        if (auto.getStatus() == null) {
+            auto.setStatus(AutoStatus.PENDING);
+        }
         auto = autoRepository.save(auto);
         return toDto(auto);
     }
@@ -51,6 +56,7 @@ public class AutoServiceImpl implements AutoService {
             throw new BadRequestAlertException("Image file is required", ENTITY_NAME, "imagerequired");
         }
         Auto auto = toEntity(autoDTO);
+        auto.setStatus(AutoStatus.PENDING);
 
         synchronized (IMAGE_LOCK) {
             StoredImage storedImage = buildStoredImageMetadata(imageFile);
@@ -64,13 +70,38 @@ public class AutoServiceImpl implements AutoService {
     @Override
     @Transactional(readOnly = true)
     public Page<AutoDTO> findAll(Pageable pageable) {
-        return autoRepository.findAll(pageable).map(this::toDto);
+        return autoRepository.findAllByStatus(AutoStatus.APPROVED, pageable).map(this::toDto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<AutoDTO> findByStatus(AutoStatus status) {
+        return autoRepository.findAllByStatusOrderByIdDesc(status).stream().map(this::toDto).toList();
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<AutoDTO> findOne(Long id) {
         return autoRepository.findById(id).map(this::toDto);
+    }
+
+    @Override
+    public AutoDTO updateStatus(Long id, AutoStatus status) {
+        Auto auto = autoRepository
+            .findById(id)
+            .orElseThrow(() -> new BadRequestAlertException("Auto not found", ENTITY_NAME, "idnotfound"));
+        auto.setStatus(status);
+        auto = autoRepository.save(auto);
+        return toDto(auto);
+    }
+
+    @Override
+    public void delete(Long id) {
+        Auto auto = autoRepository
+            .findById(id)
+            .orElseThrow(() -> new BadRequestAlertException("Auto not found", ENTITY_NAME, "idnotfound"));
+        autoRepository.delete(auto);
+        deleteImageFile(auto.getImagenUrl());
     }
 
     private Auto toEntity(AutoDTO dto) {
@@ -83,6 +114,7 @@ public class AutoServiceImpl implements AutoService {
         auto.setPrecio(dto.getPrecio());
         auto.setTransmision(dto.getTransmision());
         auto.setImagenUrl(dto.getImagenUrl());
+        auto.setStatus(dto.getStatus());
         return auto;
     }
 
@@ -96,6 +128,7 @@ public class AutoServiceImpl implements AutoService {
         dto.setPrecio(auto.getPrecio());
         dto.setTransmision(auto.getTransmision());
         dto.setImagenUrl(auto.getImagenUrl());
+        dto.setStatus(auto.getStatus());
         return dto;
     }
 
@@ -144,6 +177,20 @@ public class AutoServiceImpl implements AutoService {
             }
         }
         return max + 1;
+    }
+
+    private void deleteImageFile(String imageUrl) {
+        if (imageUrl == null || imageUrl.isBlank()) {
+            return;
+        }
+
+        String fileName = Paths.get(imageUrl).getFileName().toString();
+        Path targetPath = Paths.get(applicationProperties.getAutos().getImageStoragePath()).resolve(fileName);
+        try {
+            Files.deleteIfExists(targetPath);
+        } catch (IOException ignored) {
+            // Best-effort cleanup.
+        }
     }
 
     private record StoredImage(Path targetPath, String publicUrl) {}

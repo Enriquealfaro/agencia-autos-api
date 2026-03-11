@@ -12,64 +12,108 @@
 
   <main id="nuevosPageContent" class="py-5 d-none">
     <div class="container">
-      <section class="mb-4">
-        <h1 class="display-6 fw-bold mb-2">Registrar auto nuevo</h1>
-        <p class="text-secondary mb-0">Completa el formulario para registrar un auto nuevo en el inventario.</p>
+      <section class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-end gap-3 mb-4">
+        <div>
+          <span class="text-uppercase small fw-semibold text-secondary">Gestion</span>
+          <h1 class="display-6 fw-bold mb-2">Autos en espera</h1>
+          <p class="text-secondary mb-0">Registra nuevos autos y administra los que estan pendientes de publicacion.</p>
+        </div>
+        <button type="button" class="btn btn-primary btn-lg align-self-start align-self-lg-auto" data-bs-toggle="modal" data-bs-target="#autoModal">
+          Agregar auto
+        </button>
       </section>
 
-      <div class="row justify-content-center">
-        <div class="col-lg-8 col-xl-7">
-          <section class="card border-0 shadow-sm">
-            <div class="card-body p-4 p-lg-5">
-              <form id="autoForm" class="row g-3" novalidate>
-                <div class="col-md-6">
-                  <label for="marca" class="form-label">Marca</label>
-                  <input type="text" class="form-control" id="marca" name="marca" required>
-                </div>
-                <div class="col-md-6">
-                  <label for="modelo" class="form-label">Modelo</label>
-                  <input type="text" class="form-control" id="modelo" name="modelo" required>
-                </div>
-                <div class="col-md-6">
-                  <label for="color" class="form-label">Color</label>
-                  <input type="text" class="form-control" id="color" name="color" required>
-                </div>
-                <div class="col-md-6">
-                  <label for="anio" class="form-label">Anio</label>
-                  <input type="number" class="form-control" id="anio" name="anio" min="1990" max="2099" required>
-                </div>
-                <div class="col-md-6">
-                  <label for="precio" class="form-label">Precio (USD)</label>
-                  <input type="number" class="form-control" id="precio" name="precio" min="0" step="0.01" required>
-                </div>
-                <div class="col-md-6">
-                  <label for="transmision" class="form-label">Transmision</label>
-                  <select id="transmision" name="transmision" class="form-select" required>
-                    <option value="" selected disabled>Selecciona</option>
-                    <option value="Manual">Manual</option>
-                    <option value="Automatica">Automatica</option>
-                  </select>
-                </div>
-                <div class="col-12">
-                  <label for="imagen" class="form-label mb-2">Imagen</label>
-                  <input type="file" class="form-control form-control-clean" id="imagen" name="imagen" accept="image/*" required>
-                  <div class="form-text small mt-2">JPG, PNG o WEBP.</div>
-                </div>
-                <div class="col-12 d-flex flex-wrap gap-2 pt-2">
-                  <button type="submit" class="btn btn-primary px-4">Guardar</button>
-                  <button type="button" id="clearBtn" class="btn btn-outline-secondary px-4">Limpiar</button>
-                </div>
-              </form>
+      <section class="card border-0 shadow-sm pending-panel">
+        <div class="card-body p-4">
+          <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
+            <div>
+              <h2 class="h4 mb-1">Lista de pendientes</h2>
+              <p class="text-secondary mb-0">Solo los autos aprobados pasan al catalogo publico.</p>
             </div>
-          </section>
+            <span id="pendingCount" class="pending-counter">0 pendientes</span>
+          </div>
+          <div id="pendingList" class="pending-list">
+            <div class="text-center py-5 text-secondary">Cargando autos pendientes...</div>
+          </div>
         </div>
-      </div>
+      </section>
+
+      <section id="pendingUsersSection" class="card border-0 shadow-sm pending-panel mt-4 d-none">
+        <div class="card-body p-4">
+          <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
+            <div>
+              <h2 class="h4 mb-1">Usuarios pendientes</h2>
+              <p class="text-secondary mb-0">Seccion administrativa para revisar solicitudes de acceso.</p>
+            </div>
+            <span id="pendingUsersCount" class="pending-counter">0 pendientes</span>
+          </div>
+          <div id="pendingUsersList" class="admin-user-list">
+            <div class="text-center py-5 text-secondary">Cargando usuarios pendientes...</div>
+          </div>
+          <div id="pendingUsersAlert" class="alert mt-4 d-none" role="alert"></div>
+        </div>
+      </section>
 
       <div id="saveAlert" class="alert mt-4 d-none" role="alert">
         Resultado de la operacion.
       </div>
     </div>
   </main>
+
+  <div class="modal fade" id="autoModal" tabindex="-1" aria-labelledby="autoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header border-0 pb-0">
+          <div>
+            <h2 id="autoModalLabel" class="modal-title h4 mb-1">Agregar auto</h2>
+            <p class="text-secondary mb-0 small">El auto se guardara con estado pendiente.</p>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body pt-3">
+          <form id="autoForm" class="row g-3" novalidate>
+            <div class="col-md-6">
+              <label for="marca" class="form-label">Marca</label>
+              <input type="text" class="form-control" id="marca" name="marca" required>
+            </div>
+            <div class="col-md-6">
+              <label for="modelo" class="form-label">Modelo</label>
+              <input type="text" class="form-control" id="modelo" name="modelo" required>
+            </div>
+            <div class="col-md-6">
+              <label for="color" class="form-label">Color</label>
+              <input type="text" class="form-control" id="color" name="color" required>
+            </div>
+            <div class="col-md-6">
+              <label for="anio" class="form-label">Anio</label>
+              <input type="number" class="form-control" id="anio" name="anio" min="1990" max="2099" required>
+            </div>
+            <div class="col-md-6">
+              <label for="precio" class="form-label">Precio (USD)</label>
+              <input type="number" class="form-control" id="precio" name="precio" min="0" step="0.01" required>
+            </div>
+            <div class="col-md-6">
+              <label for="transmision" class="form-label">Transmision</label>
+              <select id="transmision" name="transmision" class="form-select" required>
+                <option value="" selected disabled>Selecciona</option>
+                <option value="Manual">Manual</option>
+                <option value="Automatica">Automatica</option>
+              </select>
+            </div>
+            <div class="col-12">
+              <label for="imagen" class="form-label mb-2">Imagen</label>
+              <input type="file" class="form-control form-control-clean" id="imagen" name="imagen" accept="image/*" required>
+              <div class="form-text small mt-2">JPG, PNG o WEBP.</div>
+            </div>
+            <div class="col-12 d-flex flex-wrap gap-2 pt-2">
+              <button type="submit" class="btn btn-primary px-4">Guardar</button>
+              <button type="button" id="clearBtn" class="btn btn-outline-secondary px-4">Limpiar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <footer class="border-top py-4 mt-auto bg-white">
     <div class="container d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2">
@@ -82,6 +126,7 @@
   <script src="js/auth.js"></script>
   <script src="js/nav.js"></script>
   <script src="js/site.js"></script>
+  <script src="js/pending-users-panel.js"></script>
   <script src="js/nuevos.js"></script>
 </body>
 </html>

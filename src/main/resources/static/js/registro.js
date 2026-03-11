@@ -36,7 +36,9 @@ document.addEventListener('DOMContentLoaded', function () {
         password: form.password.value,
       });
 
-      window.location.href = 'index.html';
+      form.reset();
+      form.classList.remove('was-validated');
+      showAlert('Cuenta creada correctamente. Quedo pendiente de aprobacion administrativa.', 'success');
     } catch (error) {
       showAlert('No se pudo crear la cuenta. Revisa si el correo ya existe.', 'danger');
     }

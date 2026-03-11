@@ -1,5 +1,6 @@
 package com.agencia.autos.domain;
 
+import com.agencia.autos.domain.enumeration.AutoStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
@@ -50,6 +51,11 @@ public class Auto implements Serializable {
     @Size(max = 255)
     @Column(name = "imagen_url", length = 255)
     private String imagenUrl;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 20, nullable = false)
+    private AutoStatus status;
 
     public Long getId() {
         return id;
@@ -115,6 +121,14 @@ public class Auto implements Serializable {
         this.imagenUrl = imagenUrl;
     }
 
+    public AutoStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(AutoStatus status) {
+        this.status = status;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -156,6 +170,8 @@ public class Auto implements Serializable {
             ", imagenUrl='" +
             imagenUrl +
             '\'' +
+            ", status=" +
+            status +
             '}'
         );
     }

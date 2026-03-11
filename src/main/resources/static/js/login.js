@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var params = new URLSearchParams(window.location.search);
       window.location.href = params.get('returnTo') || 'index.html';
     } catch (error) {
-      showAlert('No se pudo iniciar sesion. Verifica correo y contrasena.', 'danger');
+      showAlert('No se pudo iniciar sesion. Verifica credenciales o espera la aprobacion de tu cuenta.', 'danger');
     }
   });
 });

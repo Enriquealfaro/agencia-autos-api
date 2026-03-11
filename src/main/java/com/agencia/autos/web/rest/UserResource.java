@@ -2,6 +2,7 @@ package com.agencia.autos.web.rest;
 
 import com.agencia.autos.config.Constants;
 import com.agencia.autos.domain.User;
+import com.agencia.autos.domain.enumeration.UserStatus;
 import com.agencia.autos.repository.UserRepository;
 import com.agencia.autos.security.AuthoritiesConstants;
 import com.agencia.autos.service.MailService;
@@ -67,6 +68,7 @@ public class UserResource {
             "lastName",
             "email",
             "activated",
+            "status",
             "langKey",
             "createdBy",
             "createdDate",
@@ -177,6 +179,13 @@ public class UserResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
+    @GetMapping("/users/pending")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    public ResponseEntity<List<AdminUserDTO>> getPendingUsers() {
+        LOG.debug("REST request to get pending users");
+        return ResponseEntity.ok(userService.getUsersByStatus(UserStatus.PENDING));
+    }
+
     private boolean onlyContainsAllowedProperties(Pageable pageable) {
         return pageable.getSort().stream().map(Sort.Order::getProperty).allMatch(ALLOWED_ORDERED_PROPERTIES::contains);
     }
@@ -192,6 +201,20 @@ public class UserResource {
     public ResponseEntity<AdminUserDTO> getUser(@PathVariable("login") @Pattern(regexp = Constants.LOGIN_REGEX) String login) {
         LOG.debug("REST request to get User : {}", login);
         return ResponseUtil.wrapOrNotFound(userService.getUserWithAuthoritiesByLogin(login).map(AdminUserDTO::new));
+    }
+
+    @PatchMapping("/users/{login}/status")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    public ResponseEntity<AdminUserDTO> updateUserStatus(
+        @PathVariable("login") @Pattern(regexp = Constants.LOGIN_REGEX) String login,
+        @RequestParam("status") UserStatus status
+    ) {
+        LOG.debug("REST request to update User status : {}, {}", login, status);
+        Optional<AdminUserDTO> updatedUser = userService.updateUserStatus(login, status);
+        return ResponseUtil.wrapOrNotFound(
+            updatedUser,
+            HeaderUtil.createAlert(applicationName, "A user status is updated with identifier " + login, login)
+        );
     }
 
     /**

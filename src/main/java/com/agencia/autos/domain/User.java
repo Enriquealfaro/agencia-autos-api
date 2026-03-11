@@ -1,6 +1,7 @@
 package com.agencia.autos.domain;
 
 import com.agencia.autos.config.Constants;
+import com.agencia.autos.domain.enumeration.UserStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -59,6 +60,11 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
     @NotNull
     @Column(nullable = false)
     private boolean activated = false;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 20, nullable = false)
+    private UserStatus status = UserStatus.ACTIVE;
 
     @Size(min = 2, max = 10)
     @Column(name = "lang_key", length = 10)
@@ -157,6 +163,14 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
         this.activated = activated;
     }
 
+    public UserStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(UserStatus status) {
+        this.status = status;
+    }
+
     public String getActivationKey() {
         return activationKey;
     }
@@ -224,6 +238,7 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
             ", email='" + email + '\'' +
             ", imageUrl='" + imageUrl + '\'' +
             ", activated='" + activated + '\'' +
+            ", status='" + status + '\'' +
             ", langKey='" + langKey + '\'' +
             ", activationKey='" + activationKey + '\'' +
             "}";

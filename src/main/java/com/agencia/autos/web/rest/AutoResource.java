@@ -1,5 +1,6 @@
 package com.agencia.autos.web.rest;
 
+import com.agencia.autos.domain.enumeration.AutoStatus;
 import com.agencia.autos.service.AutoService;
 import com.agencia.autos.service.dto.AutoDTO;
 import com.agencia.autos.web.rest.errors.BadRequestAlertException;
@@ -45,6 +46,7 @@ public class AutoResource {
         if (autoDTO.getId() != null) {
             throw new BadRequestAlertException("A new auto cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        autoDTO.setStatus(AutoStatus.PENDING);
 
         AutoDTO result = autoService.save(autoDTO);
         return ResponseEntity.created(new URI("/api/autos/" + result.getId()))
@@ -69,6 +71,7 @@ public class AutoResource {
         autoDTO.setAnio(anio);
         autoDTO.setPrecio(precio);
         autoDTO.setTransmision(transmision);
+        autoDTO.setStatus(AutoStatus.PENDING);
 
         LOG.debug("REST request to save Auto with image : {}", autoDTO);
         AutoDTO result = autoService.saveWithImage(autoDTO, imagen);
@@ -79,15 +82,36 @@ public class AutoResource {
 
     @GetMapping("")
     public ResponseEntity<List<AutoDTO>> getAllAutos(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
-        LOG.debug("REST request to get a page of Autos");
+        LOG.debug("REST request to get a page of approved Autos");
         Page<AutoDTO> page = autoService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    @GetMapping("/pending")
+    public ResponseEntity<List<AutoDTO>> getPendingAutos() {
+        LOG.debug("REST request to get pending Autos");
+        return ResponseEntity.ok(autoService.findByStatus(AutoStatus.PENDING));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<AutoDTO> getAuto(@PathVariable("id") Long id) {
         LOG.debug("REST request to get Auto : {}", id);
         return ResponseUtil.wrapOrNotFound(autoService.findOne(id));
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<AutoDTO> updateAutoStatus(@PathVariable("id") Long id, @RequestParam("status") AutoStatus status) {
+        LOG.debug("REST request to update Auto status : {}, {}", id, status);
+        return ResponseEntity.ok(autoService.updateStatus(id, status));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAuto(@PathVariable("id") Long id) {
+        LOG.debug("REST request to delete Auto : {}", id);
+        autoService.delete(id);
+        return ResponseEntity.noContent()
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
+            .build();
     }
 }

@@ -15,6 +15,8 @@
     <include file="config/liquibase/changelog/20260215193000_add_auto_table.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260216001000_add_auto_image_url_column.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260311110000_add_editor_authority.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260311123000_add_auto_status_column.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260311133000_add_user_status_column.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->

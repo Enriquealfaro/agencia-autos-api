@@ -1,6 +1,8 @@
 package com.agencia.autos.service;
 
+import com.agencia.autos.domain.enumeration.AutoStatus;
 import com.agencia.autos.service.dto.AutoDTO;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,5 +15,11 @@ public interface AutoService {
 
     Page<AutoDTO> findAll(Pageable pageable);
 
+    List<AutoDTO> findByStatus(AutoStatus status);
+
     Optional<AutoDTO> findOne(Long id);
+
+    AutoDTO updateStatus(Long id, AutoStatus status);
+
+    void delete(Long id);
 }

@@ -1,5 +1,6 @@
 package com.agencia.autos.service.dto;
 
+import com.agencia.autos.domain.enumeration.AutoStatus;
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 
@@ -35,6 +36,9 @@ public class AutoDTO {
 
     @Size(max = 255)
     private String imagenUrl;
+
+    @NotNull
+    private AutoStatus status;
 
     public Long getId() {
         return id;
@@ -100,6 +104,14 @@ public class AutoDTO {
         this.imagenUrl = imagenUrl;
     }
 
+    public AutoStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(AutoStatus status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return (
@@ -125,6 +137,8 @@ public class AutoDTO {
             ", imagenUrl='" +
             imagenUrl +
             '\'' +
+            ", status=" +
+            status +
             '}'
         );
     }

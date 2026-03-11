@@ -3,6 +3,7 @@ package com.agencia.autos.service.dto;
 import com.agencia.autos.config.Constants;
 import com.agencia.autos.domain.Authority;
 import com.agencia.autos.domain.User;
+import com.agencia.autos.domain.enumeration.UserStatus;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.time.Instant;
@@ -38,6 +39,9 @@ public class AdminUserDTO implements Serializable {
 
     private boolean activated = false;
 
+    @NotNull
+    private UserStatus status = UserStatus.ACTIVE;
+
     @Size(min = 2, max = 10)
     private String langKey;
 
@@ -62,6 +66,7 @@ public class AdminUserDTO implements Serializable {
         this.lastName = user.getLastName();
         this.email = user.getEmail();
         this.activated = user.isActivated();
+        this.status = user.getStatus();
         this.imageUrl = user.getImageUrl();
         this.langKey = user.getLangKey();
         this.createdBy = user.getCreatedBy();
@@ -127,6 +132,14 @@ public class AdminUserDTO implements Serializable {
         this.activated = activated;
     }
 
+    public UserStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(UserStatus status) {
+        this.status = status;
+    }
+
     public String getLangKey() {
         return langKey;
     }
@@ -185,6 +198,7 @@ public class AdminUserDTO implements Serializable {
             ", email='" + email + '\'' +
             ", imageUrl='" + imageUrl + '\'' +
             ", activated=" + activated +
+            ", status=" + status +
             ", langKey='" + langKey + '\'' +
             ", createdBy=" + createdBy +
             ", createdDate=" + createdDate +

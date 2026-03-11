@@ -2,6 +2,7 @@ package com.agencia.autos.security;
 
 import com.agencia.autos.domain.Authority;
 import com.agencia.autos.domain.User;
+import com.agencia.autos.domain.enumeration.UserStatus;
 import com.agencia.autos.repository.UserRepository;
 import java.util.*;
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
@@ -49,7 +50,7 @@ public class DomainUserDetailsService implements UserDetailsService {
     }
 
     private org.springframework.security.core.userdetails.User createSpringSecurityUser(String lowercaseLogin, User user) {
-        if (!user.isActivated()) {
+        if (!user.isActivated() || user.getStatus() != UserStatus.ACTIVE) {
             throw new UserNotActivatedException("User " + lowercaseLogin + " was not activated");
         }
         return UserWithId.fromUser(user);

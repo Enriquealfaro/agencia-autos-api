@@ -1,6 +1,7 @@
 package com.agencia.autos.repository;
 
 import com.agencia.autos.domain.User;
+import com.agencia.autos.domain.enumeration.UserStatus;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -33,4 +34,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findOneWithAuthoritiesByEmailIgnoreCase(String email);
 
     Page<User> findAllByIdNotNullAndActivatedIsTrue(Pageable pageable);
+
+    List<User> findAllByStatusOrderByCreatedDateDesc(UserStatus status);
 }

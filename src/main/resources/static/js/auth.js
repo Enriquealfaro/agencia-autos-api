@@ -125,6 +125,10 @@
     return hasAnyRole(['ROLE_EDITOR', 'ROLE_ADMIN']);
   }
 
+  function isAdmin() {
+    return hasAnyRole(['ROLE_ADMIN']);
+  }
+
   function getDisplayName() {
     var session = getSession();
     if (!session || !session.account) {
@@ -191,10 +195,7 @@
       throw new Error('HTTP ' + response.status);
     }
 
-    return login({
-      email: payload.email,
-      password: payload.password,
-    });
+    return true;
   }
 
   function getCurrentPageName() {
@@ -237,6 +238,7 @@
     getToken: getToken,
     hasAnyRole: hasAnyRole,
     isAuthenticated: isAuthenticated,
+    isAdmin: isAdmin,
     login: login,
     logout: logout,
     redirectToLogin: redirectToLogin,

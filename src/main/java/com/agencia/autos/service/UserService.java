@@ -3,6 +3,7 @@ package com.agencia.autos.service;
 import com.agencia.autos.config.Constants;
 import com.agencia.autos.domain.Authority;
 import com.agencia.autos.domain.User;
+import com.agencia.autos.domain.enumeration.UserStatus;
 import com.agencia.autos.repository.AuthorityRepository;
 import com.agencia.autos.repository.UserRepository;
 import com.agencia.autos.security.AuthoritiesConstants;
@@ -61,6 +62,7 @@ public class UserService {
             .map(user -> {
                 // activate given user for the registration key.
                 user.setActivated(true);
+                user.setStatus(UserStatus.ACTIVE);
                 user.setActivationKey(null);
                 this.clearUserCaches(user);
                 LOG.debug("Activated user: {}", user);
@@ -125,6 +127,7 @@ public class UserService {
         newUser.setLangKey(userDTO.getLangKey());
         // new user is not active
         newUser.setActivated(false);
+        newUser.setStatus(UserStatus.PENDING);
         // new user gets registration key
         newUser.setActivationKey(RandomUtil.generateActivationKey());
         Set<Authority> authorities = new HashSet<>();
@@ -163,7 +166,8 @@ public class UserService {
         newUser.setLastName(registerUserVM.getLastName());
         newUser.setEmail(normalizedEmail);
         newUser.setLangKey(Constants.DEFAULT_LANGUAGE);
-        newUser.setActivated(true);
+        newUser.setActivated(false);
+        newUser.setStatus(UserStatus.PENDING);
         newUser.setActivationKey(null);
         newUser.setResetKey(null);
         newUser.setResetDate(null);
@@ -207,7 +211,9 @@ public class UserService {
         user.setPassword(encryptedPassword);
         user.setResetKey(RandomUtil.generateResetKey());
         user.setResetDate(Instant.now());
-        user.setActivated(true);
+        UserStatus status = userDTO.getStatus() == null ? UserStatus.ACTIVE : userDTO.getStatus();
+        user.setStatus(status);
+        user.setActivated(status == UserStatus.ACTIVE);
         if (userDTO.getAuthorities() != null) {
             Set<Authority> authorities = userDTO
                 .getAuthorities()
@@ -243,7 +249,9 @@ public class UserService {
                     user.setEmail(userDTO.getEmail().toLowerCase());
                 }
                 user.setImageUrl(userDTO.getImageUrl());
-                user.setActivated(userDTO.isActivated());
+                UserStatus status = userDTO.getStatus() == null ? UserStatus.ACTIVE : userDTO.getStatus();
+                user.setStatus(status);
+                user.setActivated(status == UserStatus.ACTIVE);
                 user.setLangKey(userDTO.getLangKey());
                 Set<Authority> managedAuthorities = user.getAuthorities();
                 managedAuthorities.clear();
@@ -320,6 +328,11 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
+    public List<AdminUserDTO> getUsersByStatus(UserStatus status) {
+        return userRepository.findAllByStatusOrderByCreatedDateDesc(status).stream().map(AdminUserDTO::new).toList();
+    }
+
+    @Transactional(readOnly = true)
     public Page<UserDTO> getAllPublicUsers(Pageable pageable) {
         return userRepository.findAllByIdNotNullAndActivatedIsTrue(pageable).map(UserDTO::new);
     }
@@ -357,6 +370,20 @@ public class UserService {
     @Transactional(readOnly = true)
     public List<String> getAuthorities() {
         return authorityRepository.findAll().stream().map(Authority::getName).toList();
+    }
+
+    public Optional<AdminUserDTO> updateUserStatus(String login, UserStatus status) {
+        return userRepository
+            .findOneWithAuthoritiesByLogin(login.toLowerCase())
+            .map(user -> {
+                this.clearUserCaches(user);
+                user.setStatus(status);
+                user.setActivated(status == UserStatus.ACTIVE);
+                User savedUser = userRepository.save(user);
+                this.clearUserCaches(savedUser);
+                return savedUser;
+            })
+            .map(AdminUserDTO::new);
     }
 
     private void clearUserCaches(User user) {

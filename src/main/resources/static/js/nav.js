@@ -14,6 +14,10 @@ document.addEventListener('DOMContentLoaded', function () {
     navItems.push({ key: 'nuevos', label: 'Nuevos', href: 'nuevos.html' });
   }
 
+  if (window.Auth.isAdmin()) {
+    navItems.push({ key: 'usuariosAdmin', label: 'Usuarios', href: 'admin-usuarios.html' });
+  }
+
   var navLinks = navItems
     .map(function (item) {
       var isActive = item.key === activePage;
