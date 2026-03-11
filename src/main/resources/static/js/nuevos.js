@@ -1,18 +1,20 @@
 document.addEventListener('DOMContentLoaded', function () {
+  if (!window.Auth || !window.Auth.ensureAccess(['ROLE_EDITOR', 'ROLE_ADMIN'])) {
+    return;
+  }
+
+  var pageContent = document.getElementById('nuevosPageContent');
   var form = document.getElementById('autoForm');
   var clearBtn = document.getElementById('clearBtn');
   var saveAlert = document.getElementById('saveAlert');
   var API_URL = '/api/autos/with-image';
 
-  if (!form || !clearBtn || !saveAlert) {
-    return;
+  if (pageContent) {
+    pageContent.classList.remove('d-none');
   }
 
-  function saveToLocalStorage(autoData) {
-    var current = localStorage.getItem('autosManoloAutos');
-    var autos = current ? JSON.parse(current) : [];
-    autos.push(autoData);
-    localStorage.setItem('autosManoloAutos', JSON.stringify(autos));
+  if (!form || !clearBtn || !saveAlert) {
+    return;
   }
 
   function showAlert(message, type) {
@@ -53,6 +55,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
       var response = await fetch(API_URL, {
         method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + window.Auth.getToken(),
+        },
         body: formData,
       });
 
@@ -60,13 +65,17 @@ document.addEventListener('DOMContentLoaded', function () {
         throw new Error('HTTP ' + response.status);
       }
 
-      var createdAuto = await response.json();
-      saveToLocalStorage(createdAuto);
+      await response.json();
       showAlert('Auto guardado correctamente en la base de datos.', 'success');
       form.reset();
       form.classList.remove('was-validated');
     } catch (error) {
-      showAlert('No se pudo guardar el auto. Revisa backend/Liquibase y vuelve a intentar.', 'danger');
+      if (error.message === 'HTTP 401' || error.message === 'HTTP 403') {
+        window.Auth.logout();
+        window.Auth.redirectToLogin('nuevos.html');
+        return;
+      }
+      showAlert('No se pudo guardar el auto. Revisa backend y vuelve a intentar.', 'danger');
     }
 
     setTimeout(function () {

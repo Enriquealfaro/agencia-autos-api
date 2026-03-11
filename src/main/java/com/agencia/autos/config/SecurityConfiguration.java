@@ -45,13 +45,21 @@ public class SecurityConfiguration {
                     .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                     .requestMatchers(mvc.pattern("/")).permitAll()
                     .requestMatchers(mvc.pattern("/index.html")).permitAll()
+                    .requestMatchers(mvc.pattern("/login.html")).permitAll()
+                    .requestMatchers(mvc.pattern("/registro.html")).permitAll()
                     .requestMatchers(mvc.pattern("/nuevos.html")).permitAll()
                     .requestMatchers(mvc.pattern("/catalogo.html")).permitAll()
                     .requestMatchers(mvc.pattern("/imagenesAutos/**")).permitAll()
                     .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/authenticate")).permitAll()
                     .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/authenticate")).permitAll()
-                    .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/autos")).permitAll()
-                    .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/autos/with-image")).permitAll()
+                    .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/autos")).hasAnyAuthority(
+                        AuthoritiesConstants.EDITOR,
+                        AuthoritiesConstants.ADMIN
+                    )
+                    .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/autos/with-image")).hasAnyAuthority(
+                        AuthoritiesConstants.EDITOR,
+                        AuthoritiesConstants.ADMIN
+                    )
                     .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/autos")).permitAll()
                     .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/autos/*")).permitAll()
                     .requestMatchers(mvc.pattern("/api/register")).permitAll()

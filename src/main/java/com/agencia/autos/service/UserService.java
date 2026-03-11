@@ -9,6 +9,7 @@ import com.agencia.autos.security.AuthoritiesConstants;
 import com.agencia.autos.security.SecurityUtils;
 import com.agencia.autos.service.dto.AdminUserDTO;
 import com.agencia.autos.service.dto.UserDTO;
+import com.agencia.autos.web.rest.vm.RegisterUserVM;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -129,6 +130,49 @@ public class UserService {
         Set<Authority> authorities = new HashSet<>();
         authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(authorities::add);
         newUser.setAuthorities(authorities);
+        userRepository.save(newUser);
+        this.clearUserCaches(newUser);
+        LOG.debug("Created Information for User: {}", newUser);
+        return newUser;
+    }
+
+    public User registerSimpleUser(RegisterUserVM registerUserVM, String password) {
+        String normalizedEmail = registerUserVM.getEmail().toLowerCase();
+
+        userRepository
+            .findOneByLogin(normalizedEmail)
+            .ifPresent(existingUser -> {
+                boolean removed = removeNonActivatedUser(existingUser);
+                if (!removed) {
+                    throw new UsernameAlreadyUsedException();
+                }
+            });
+        userRepository
+            .findOneByEmailIgnoreCase(normalizedEmail)
+            .ifPresent(existingUser -> {
+                boolean removed = removeNonActivatedUser(existingUser);
+                if (!removed) {
+                    throw new EmailAlreadyUsedException();
+                }
+            });
+
+        User newUser = new User();
+        newUser.setLogin(normalizedEmail);
+        newUser.setPassword(passwordEncoder.encode(password));
+        newUser.setFirstName(registerUserVM.getFirstName());
+        newUser.setLastName(registerUserVM.getLastName());
+        newUser.setEmail(normalizedEmail);
+        newUser.setLangKey(Constants.DEFAULT_LANGUAGE);
+        newUser.setActivated(true);
+        newUser.setActivationKey(null);
+        newUser.setResetKey(null);
+        newUser.setResetDate(null);
+
+        Set<Authority> authorities = new HashSet<>();
+        authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(authorities::add);
+        authorityRepository.findById(AuthoritiesConstants.EDITOR).ifPresent(authorities::add);
+        newUser.setAuthorities(authorities);
+
         userRepository.save(newUser);
         this.clearUserCaches(newUser);
         LOG.debug("Created Information for User: {}", newUser);

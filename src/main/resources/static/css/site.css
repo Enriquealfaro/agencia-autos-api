@@ -23,6 +23,10 @@ body {
   color: var(--text);
 }
 
+a {
+  text-decoration: none;
+}
+
 .text-secondary {
   color: var(--muted) !important;
 }
@@ -72,6 +76,15 @@ body {
 .cta {
   background: var(--surface);
   border: 1px solid var(--border);
+}
+
+.auth-card {
+  border-radius: 1rem;
+}
+
+.navbar-user {
+  font-size: 0.95rem;
+  white-space: nowrap;
 }
 
 .form-control-clean {

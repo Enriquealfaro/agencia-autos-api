@@ -10,6 +10,7 @@ import com.agencia.autos.service.dto.PasswordChangeDTO;
 import com.agencia.autos.web.rest.errors.*;
 import com.agencia.autos.web.rest.vm.KeyAndPasswordVM;
 import com.agencia.autos.web.rest.vm.ManagedUserVM;
+import com.agencia.autos.web.rest.vm.RegisterUserVM;
 import jakarta.validation.Valid;
 import java.util.*;
 import org.apache.commons.lang3.StringUtils;
@@ -56,12 +57,11 @@ public class AccountResource {
      */
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public void registerAccount(@Valid @RequestBody ManagedUserVM managedUserVM) {
-        if (isPasswordLengthInvalid(managedUserVM.getPassword())) {
+    public void registerAccount(@Valid @RequestBody RegisterUserVM registerUserVM) {
+        if (isPasswordLengthInvalid(registerUserVM.getPassword())) {
             throw new InvalidPasswordException();
         }
-        User user = userService.registerUser(managedUserVM, managedUserVM.getPassword());
-        mailService.sendActivationEmail(user);
+        userService.registerSimpleUser(registerUserVM, registerUserVM.getPassword());
     }
 
     /**
