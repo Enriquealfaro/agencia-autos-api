@@ -1,16 +1,11 @@
 document.addEventListener('DOMContentLoaded', function () {
   var form = document.getElementById('autoForm');
   var clearBtn = document.getElementById('clearBtn');
-  var output = document.getElementById('jsonOutput');
   var saveAlert = document.getElementById('saveAlert');
   var API_URL = '/api/autos/with-image';
 
-  if (!form || !output || !clearBtn || !saveAlert) {
+  if (!form || !clearBtn || !saveAlert) {
     return;
-  }
-
-  function showJson(data) {
-    output.textContent = JSON.stringify(data, null, 2);
   }
 
   function saveToLocalStorage(autoData) {
@@ -44,8 +39,6 @@ document.addEventListener('DOMContentLoaded', function () {
     };
     var imageFile = form.imagen.files && form.imagen.files.length > 0 ? form.imagen.files[0] : null;
 
-    showJson({ payload: autoData, imagen: imageFile ? imageFile.name : null, estado: 'Enviando...' });
-
     try {
       var formData = new FormData();
       formData.append('marca', autoData.marca);
@@ -68,13 +61,11 @@ document.addEventListener('DOMContentLoaded', function () {
       }
 
       var createdAuto = await response.json();
-      showJson({ payloadEnviado: autoData, respuesta: createdAuto });
       saveToLocalStorage(createdAuto);
       showAlert('Auto guardado correctamente en la base de datos.', 'success');
       form.reset();
       form.classList.remove('was-validated');
     } catch (error) {
-      showJson({ payloadEnviado: autoData, error: error.message });
       showAlert('No se pudo guardar el auto. Revisa backend/Liquibase y vuelve a intentar.', 'danger');
     }
 
@@ -86,6 +77,5 @@ document.addEventListener('DOMContentLoaded', function () {
   clearBtn.addEventListener('click', function () {
     form.reset();
     form.classList.remove('was-validated');
-    showJson({ mensaje: 'Completa el formulario para ver el JSON' });
   });
 });

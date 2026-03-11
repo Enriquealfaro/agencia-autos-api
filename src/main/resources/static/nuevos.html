@@ -37,8 +37,8 @@
         <p class="text-secondary mb-0">Completa el formulario para generar el JSON del auto y enviarlo al endpoint de la API.</p>
       </section>
 
-      <div class="row g-4">
-        <div class="col-lg-7">
+      <div class="row justify-content-center">
+        <div class="col-lg-8 col-xl-7">
           <section class="card border-0 shadow-sm">
             <div class="card-body p-4 p-lg-5">
               <form id="autoForm" class="row g-3" novalidate>
@@ -71,27 +71,15 @@
                   </select>
                 </div>
                 <div class="col-12">
-                  <label for="imagen" class="form-label">Imagen del auto</label>
-                  <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*" required>
-                  <div class="form-text">Se guarda en carpeta <code>imagenesAutos</code> con nombre incremental.</div>
+                  <label for="imagen" class="form-label mb-2">Imagen</label>
+                  <input type="file" class="form-control form-control-clean" id="imagen" name="imagen" accept="image/*" required>
+                  <div class="form-text small mt-2">JPG, PNG o WEBP.</div>
                 </div>
                 <div class="col-12 d-flex flex-wrap gap-2 pt-2">
-                  <button type="submit" class="btn btn-primary">Generar JSON</button>
-                  <button type="button" id="clearBtn" class="btn btn-outline-secondary">Limpiar</button>
+                  <button type="submit" class="btn btn-primary px-4">Guardar</button>
+                  <button type="button" id="clearBtn" class="btn btn-outline-secondary px-4">Limpiar</button>
                 </div>
               </form>
-            </div>
-          </section>
-        </div>
-
-        <div class="col-lg-5">
-          <section class="card border-0 shadow-sm h-100">
-            <div class="card-body p-4 p-lg-5 d-flex flex-column">
-              <h2 class="h5 mb-3">JSON generado</h2>
-              <p class="text-secondary small mb-3">Este bloque muestra el payload enviado y la respuesta del endpoint.</p>
-              <pre id="jsonOutput" class="json-output flex-grow-1 mb-0">{
-  "mensaje": "Completa el formulario para ver el JSON"
-}</pre>
             </div>
           </section>
         </div>
